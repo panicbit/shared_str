@@ -52,8 +52,12 @@ impl ArcStr {
 
 impl From<String> for ArcStr {
     fn from(s: String) -> Self {
-        let inner = Arc::<str>::from(s);
+        Self::from(Arc::<str>::from(s))
+    }
+}
 
+impl From<Arc<str>> for ArcStr {
+    fn from(inner: Arc<str>) -> Self {
         Self {
             ptr: inner.as_ptr(),
             len: inner.len(),

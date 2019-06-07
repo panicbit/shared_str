@@ -52,8 +52,12 @@ impl RcStr {
 
 impl From<String> for RcStr {
     fn from(s: String) -> Self {
-        let inner = Rc::<str>::from(s);
+        Self::from(Rc::<str>::from(s))
+    }
+}
 
+impl From<Rc<str>> for RcStr {
+    fn from(inner: Rc<str>) -> Self {
         Self {
             ptr: inner.as_ptr(),
             len: inner.len(),
