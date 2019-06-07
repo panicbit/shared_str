@@ -1,16 +1,16 @@
 use std::str;
-use std::rc::Rc;
+use std::sync::Arc;
 use std::slice;
 
-pub struct RcStr {
+pub struct ArcStr {
     ptr: *const u8,
     len: usize,
-    inner: Rc<str>,
+    inner: Arc<str>,
 }
 
-impl RcStr {
+impl ArcStr {
     pub fn new(s: impl Into<String>) -> Self {
-        RcStr::from(s.into())
+        ArcStr::from(s.into())
     }
 
     pub fn from_slice(owner: &Self, s: &str) -> Option<Self> {
@@ -50,9 +50,9 @@ impl RcStr {
     }
 }
 
-impl From<String> for RcStr {
+impl From<String> for ArcStr {
     fn from(s: String) -> Self {
-        let inner = Rc::<str>::from(s);
+        let inner = Arc::<str>::from(s);
 
         Self {
             ptr: inner.as_ptr(),
@@ -64,13 +64,13 @@ impl From<String> for RcStr {
 
 #[cfg(test)]
 mod tests {
-    use super::RcStr;
+    use super::ArcStr;
 
     const STR: &str = "hello world";
 
     #[test]
     fn sliced() {
-        let rcs = RcStr::new(STR);
+        let rcs = ArcStr::new(STR);
         let str = rcs.as_str();
 
         assert_eq!(rcs.sliced(&str[0..]).unwrap().as_str(), &STR[0..]);
@@ -81,13 +81,13 @@ mod tests {
 
     #[test]
     fn len() {
-        let rcs = RcStr::new(STR);
+        let rcs = ArcStr::new(STR);
         assert_eq!(rcs.len(), STR.len());
     }
 
     #[test]
     fn as_str() {
-        let rcs = RcStr::new(STR);
+        let rcs = ArcStr::new(STR);
         assert_eq!(rcs.as_str(), STR);
     }
 }
