@@ -3,6 +3,7 @@ use std::sync::Arc;
 use std::slice;
 use std::ops::Deref;
 
+#[derive(Clone)]
 pub struct ArcStr {
     ptr: *const u8,
     len: usize,

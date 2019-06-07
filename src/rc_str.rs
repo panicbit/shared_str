@@ -3,6 +3,7 @@ use std::rc::Rc;
 use std::slice;
 use std::ops::Deref;
 
+#[derive(Clone)]
 pub struct RcStr {
     ptr: *const u8,
     len: usize,
