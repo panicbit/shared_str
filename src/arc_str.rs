@@ -55,6 +55,12 @@ impl ArcStr {
     }
 }
 
+impl From<&'_ str> for ArcStr {
+    fn from(s: &'_ str) -> Self {
+        Self::from(Arc::<str>::from(s))
+    }
+}
+
 impl From<String> for ArcStr {
     fn from(s: String) -> Self {
         Self::from(Arc::<str>::from(s))

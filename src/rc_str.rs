@@ -52,6 +52,12 @@ impl RcStr {
     }
 }
 
+impl From<&'_ str> for RcStr {
+    fn from(s: &'_ str) -> Self {
+        Self::from(Rc::<str>::from(s))
+    }
+}
+
 impl From<String> for RcStr {
     fn from(s: String) -> Self {
         Self::from(Rc::<str>::from(s))
