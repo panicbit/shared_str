@@ -10,6 +10,9 @@ pub struct ArcStr {
     inner: Arc<str>,
 }
 
+unsafe impl Send for ArcStr {}
+unsafe impl Sync for ArcStr {}
+
 impl ArcStr {
     pub fn new(s: impl Into<String>) -> Self {
         ArcStr::from(s.into())
