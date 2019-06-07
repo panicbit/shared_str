@@ -1,6 +1,7 @@
 use std::str;
 use std::rc::Rc;
 use std::slice;
+use std::ops::Deref;
 
 pub struct RcStr {
     ptr: *const u8,
@@ -63,6 +64,14 @@ impl From<Rc<str>> for RcStr {
             len: inner.len(),
             inner,
         }
+    }
+}
+
+impl Deref for RcStr {
+    type Target = str;
+
+    fn deref(&self) -> &str {
+        self.as_str()
     }
 }
 

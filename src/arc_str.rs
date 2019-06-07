@@ -1,6 +1,7 @@
 use std::str;
 use std::sync::Arc;
 use std::slice;
+use std::ops::Deref;
 
 pub struct ArcStr {
     ptr: *const u8,
@@ -63,6 +64,14 @@ impl From<Arc<str>> for ArcStr {
             len: inner.len(),
             inner,
         }
+    }
+}
+
+impl Deref for ArcStr {
+    type Target = str;
+
+    fn deref(&self) -> &str {
+        self.as_str()
     }
 }
 
