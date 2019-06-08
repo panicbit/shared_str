@@ -35,6 +35,18 @@ impl RcStr {
         }
     }
 
+    pub fn trim(&self) -> Self {
+        self.sliced(self.as_str().trim()).unwrap()
+    }
+
+    pub fn trim_start(&self) -> Self {
+        self.sliced(self.as_str().trim_start()).unwrap()
+    }
+
+    pub fn trim_end(&self) -> Self {
+        self.sliced(self.as_str().trim_end()).unwrap()
+    }
+
     pub fn sliced(&self, s: &str) -> Option<Self> {
         let start_ptr = self.inner.as_ptr();
         let end_ptr = self.inner[self.inner.len()..].as_ptr();
