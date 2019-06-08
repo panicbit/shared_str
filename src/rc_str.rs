@@ -62,6 +62,13 @@ impl RcStr {
             inner: self.inner.clone(),
         })
     }
+
+    pub fn slice_with<F>(&self, f: F) -> Option<Self>
+    where
+        F: FnOnce(&str) -> &str
+    {
+        self.sliced(f(self.as_str()))
+    }
 }
 
 impl From<&'_ str> for RcStr {
