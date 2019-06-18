@@ -3,5 +3,8 @@ name = "shared_str"
 version = "0.1.0"
 authors = ["panicbit <panicbit.dev@gmail.com>"]
 edition = "2018"
+repository = "https://github.com/panicbit/shared_str"
+description = "Shared str types providing more features over Rc<str> / Arc<str>"
+license = "MIT"
 
 [dependencies]
