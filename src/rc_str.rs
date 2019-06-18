@@ -1,12 +1,11 @@
 use std::str;
 use std::rc::Rc;
-use std::slice;
 use std::ops::Deref;
+use std::ptr::NonNull;
 
 #[derive(Clone)]
 pub struct RcStr {
-    ptr: *const u8,
-    len: usize,
+    ptr: NonNull<str>,
     inner: Rc<str>,
 }
 
@@ -29,8 +28,7 @@ impl From<String> for RcStr {
 impl From<Rc<str>> for RcStr {
     fn from(inner: Rc<str>) -> Self {
         Self {
-            ptr: inner.as_ptr(),
-            len: inner.len(),
+            ptr: NonNull::from(&*inner),
             inner,
         }
     }

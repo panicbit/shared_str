@@ -2,11 +2,11 @@ use std::str;
 use std::sync::Arc;
 use std::slice;
 use std::ops::Deref;
+use std::ptr::NonNull;
 
 #[derive(Clone)]
 pub struct ArcStr {
-    ptr: *const u8,
-    len: usize,
+    ptr: NonNull<str>,
     inner: Arc<str>,
 }
 
@@ -32,8 +32,7 @@ impl From<String> for ArcStr {
 impl From<Arc<str>> for ArcStr {
     fn from(inner: Arc<str>) -> Self {
         Self {
-            ptr: inner.as_ptr(),
-            len: inner.len(),
+            ptr: NonNull::from(&*inner),
             inner,
         }
     }

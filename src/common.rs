@@ -8,48 +8,55 @@ macro_rules! impl_common { () => {
         owner.sliced(s)
     }
 
-    pub fn len(&self) -> usize {
-        self.len
-    }
-
     pub fn as_bytes(&self) -> &[u8] {
-        unsafe {
-            slice::from_raw_parts(self.ptr, self.len)
-        }
+        self.as_str().as_bytes()
     }
 
     pub fn as_str(&self) -> &str {
         unsafe {
-            str::from_utf8_unchecked(self.as_bytes())
+            self.ptr.as_ref()
         }
     }
 
     pub fn trim(&self) -> Self {
-        self.sliced(self.as_str().trim()).unwrap()
+        unsafe { self.slice_with_unchecked(str::trim) }
     }
 
     pub fn trim_start(&self) -> Self {
-        self.sliced(self.as_str().trim_start()).unwrap()
+        unsafe { self.slice_with_unchecked(str::trim_start) }
     }
 
     pub fn trim_end(&self) -> Self {
-        self.sliced(self.as_str().trim_end()).unwrap()
+        unsafe { self.slice_with_unchecked(str::trim_end) }
     }
 
-    pub fn sliced(&self, s: &str) -> Option<Self> {
+    pub fn owns(&self, slice: &str) -> bool {
         let start_ptr = self.inner.as_ptr();
         let end_ptr = self.inner[self.inner.len()..].as_ptr();
-        let ptr = s.as_ptr();
+        let ptr = slice.as_ptr();
 
-        if ptr < start_ptr || end_ptr < ptr {
-            return None;
+        (start_ptr ..= end_ptr).contains(&ptr)
+    }
+
+    pub fn sliced(&self, slice: &str) -> Option<Self> {
+        unsafe {
+            if slice.is_empty() {
+                return Some(self.sliced_unchecked(&self[..0]));
+            }
+
+            if !self.owns(slice) {
+                return None;
+            }
+
+            Some(self.sliced_unchecked(slice))
         }
+    }
 
-        Some(Self {
-            ptr,
-            len: s.len(),
+    pub unsafe fn sliced_unchecked(&self, slice: &str) -> Self {
+        Self {
+            ptr: NonNull::from(slice),
             inner: self.inner.clone(),
-        })
+        }
     }
 
     pub fn slice_with<F>(&self, f: F) -> Option<Self>
@@ -57,5 +64,12 @@ macro_rules! impl_common { () => {
         F: FnOnce(&str) -> &str
     {
         self.sliced(f(self.as_str()))
+    }
+
+    pub unsafe fn slice_with_unchecked<F>(&self, f: F) -> Self
+    where
+        F: FnOnce(&str) -> &str
+    {
+        self.sliced_unchecked(f(self.as_str()))
     }
 }}
