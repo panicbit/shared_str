@@ -16,7 +16,7 @@ impl $OUTER {
     }
 
     pub fn from_slice(owner: &Self, s: &str) -> Option<Self> {
-        owner.sliced(s)
+        owner.rejoin(s)
     }
 
     pub fn as_bytes(&self) -> &[u8] {
@@ -49,21 +49,21 @@ impl $OUTER {
         (start_ptr ..= end_ptr).contains(&ptr)
     }
 
-    pub fn sliced(&self, slice: &str) -> Option<Self> {
+    pub fn rejoin(&self, slice: &str) -> Option<Self> {
         unsafe {
             if slice.is_empty() {
-                return Some(self.sliced_unchecked(&self[..0]));
+                return Some(self.rejoin_unchecked(&self[..0]));
             }
 
             if !self.owns(slice) {
                 return None;
             }
 
-            Some(self.sliced_unchecked(slice))
+            Some(self.rejoin_unchecked(slice))
         }
     }
 
-    pub unsafe fn sliced_unchecked(&self, slice: &str) -> Self {
+    pub unsafe fn rejoin_unchecked(&self, slice: &str) -> Self {
         Self {
             ptr: NonNull::from(slice),
             inner: self.inner.clone(),
@@ -74,14 +74,14 @@ impl $OUTER {
     where
         F: FnOnce(&str) -> &str
     {
-        self.sliced(f(self.as_str()))
+        self.rejoin(f(self.as_str()))
     }
 
     pub unsafe fn slice_with_unchecked<F>(&self, f: F) -> Self
     where
         F: FnOnce(&str) -> &str
     {
-        self.sliced_unchecked(f(self.as_str()))
+        self.rejoin_unchecked(f(self.as_str()))
     }
 }
 
@@ -121,14 +121,14 @@ mod tests {
     const STR: &str = "hello world";
 
     #[test]
-    fn sliced() {
+    fn rejoin() {
         let rcs = $OUTER::new(STR);
         let str = rcs.as_str();
 
-        assert_eq!(rcs.sliced(&str[0..]).unwrap().as_str(), &STR[0..]);
-        assert_eq!(rcs.sliced(&str[..str.len()]).unwrap().as_str(), &STR[..STR.len()]);
-        assert_eq!(rcs.sliced(&str[3..6]).unwrap().as_str(), &STR[3..6]);
-        assert!(rcs.sliced("foo").is_none());
+        assert_eq!(rcs.rejoin(&str[0..]).unwrap().as_str(), &STR[0..]);
+        assert_eq!(rcs.rejoin(&str[..str.len()]).unwrap().as_str(), &STR[..STR.len()]);
+        assert_eq!(rcs.rejoin(&str[3..6]).unwrap().as_str(), &STR[3..6]);
+        assert!(rcs.rejoin("foo").is_none());
     }
 
     #[test]
