@@ -1,6 +1,6 @@
 
 #[macro_use]
-mod common;
+mod shared_str;
 
 mod rc_str;
 pub use rc_str::RcStr;
