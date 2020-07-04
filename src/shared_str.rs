@@ -4,7 +4,7 @@ macro_rules! impl_shared_str { ($OUTER:ident, $INNER:ident) => {
 
 use std::ptr::NonNull;
 
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq,Eq)]
 pub struct $OUTER {
     ptr: NonNull<str>,
     inner: $INNER<str>,
