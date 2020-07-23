@@ -4,7 +4,7 @@ macro_rules! impl_shared_str { ($OUTER:ident, $INNER:ident) => {
 
 use std::ptr::NonNull;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct $OUTER {
     ptr: NonNull<str>,
     inner: $INNER<str>,
@@ -111,6 +111,12 @@ impl std::ops::Deref for $OUTER {
 
     fn deref(&self) -> &str {
         Self::as_str(self)
+    }
+}
+
+impl std::fmt::Display for $OUTER {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.as_str())
     }
 }
 
